@@ -224,11 +224,11 @@ final_plot <- ggplot(combined, mapping = aes(x= Date, y= PPM))+
   
   
   
-  # scale_color_manual(name = "Legend", values = c("Ice Core Data" = "red", "Modern Mauna Loa Data"= "green"))
+  # scale_color_manual(name = "Legend", values = c("Ice Core Data"   #= "red", "Modern Mauna Loa Data"= "green"))
   ##couldnt figure out how to make custom legend
   
   
-  scale_x_continuous(name= "Date", breaks= c(-400000,-300000,-200000,-100000,2000), labels = c("400 ka", "300 ka" , "200 ka" , "100 ka" ,2000))
+  scale_x_continuous(name= "Date", breaks= c(-400000,-300000,-200000,-100000,1800), labels = c("400 ka", "300 ka" , "200 ka" , "100 ka" ,1800))
 
 final_plot <- final_plot + geom_line(data = segment, mapping = aes(x=Date, y=PPM), color = "green")
 final_plot
@@ -237,3 +237,7 @@ final_plot
 ### Bonus 2 (1 point)
 
 Write a catchy title and short description in the style of a NYtimes infographic, contrasting the rate of anthropogenic vs. background climate change for a general public audience.
+
+Slow Cycle to Sudden Spike:
+
+For millions of years, Earth's atmospheric CO2 rose and fell gradually over thousands of years. However, since the industrial revolution, humans have driven an unprecedented spike in less than 150 years. This graph contrasts the natural rhythm of CO2 ebb and flow with today's human made spike.
