@@ -1,6 +1,7 @@
 # Module 1: Climate
 
 ## Team members and contributions
+Evan Wyers, worked by myself
 To be updated
 
 ## Learning objectives
