@@ -1,13 +1,15 @@
 ---
 title: "Module 1: Climate change"
-format: html
+format: pdf
 editor: visual
 ---
 
 ```{r}
 #| warning: false
-#| output-location: false
+#| output-location: default
+#install.packages("quarto")
 library(tidyverse)
+library(quarto)
 ```
 
 ## Team members, etc
@@ -140,7 +142,9 @@ The measurements are made from measuring land and ocean surface temperatures, th
 Construct code to import dataset in a format that can be used for transforming and visualization.
 
 ```{r}
-nasa <- read_table(file = "https://data.giss.nasa.gov/gistemp/graphs/graph_data/Global_Mean_Estimates_based_on_Land_and_Ocean_Data/graph.txt", col_names = c("year", "no_smoothing", "lowess"), col_types = NULL, skip = 5 )
+nasa <- read_table(file = "https://data.giss.nasa.gov/gistemp/graphs/graph_data/Global_Mean_Estimates_based_on_Land_and_Ocean_Data/graph.txt", 
+                   col_names = c("year", "no_smoothing", "lowess"), 
+                   col_types = NULL, skip = 5 )
 ```
 
 ### Q6 (1 point)
@@ -185,7 +189,10 @@ m is meters, yr BP is years before present, PPMV is Parts per million by volume.
 Ice cores were recovered from Antarctica. Different depth levels correspond to how long ago the ice froze. Ice from different depth levels were crushed under a vacuum, and when the gases from the ice expanded, CO2 concentrations were measured with gas chromatography.
 
 ```{r}
-icecore <- read_table(file = "Data/vostok.icecore.co2.txt", col_names = c("Depth (m)", "Age of the Ice (yr BP)", "Mean Age of the Air (yr BP)", "CO2 Concentration (PPMV)"), skip = 21)
+icecore <- read_table(file = "Data/vostok.icecore.co2.txt", 
+                      col_names = c("Depth (m)", "Age of the Ice (yr BP)", 
+                                    "Mean Age of the Air (yr BP)", 
+                                    "CO2 Concentration (PPMV)"), skip = 21)
 ```
 
 ### Q9 (1 point)
@@ -194,7 +201,8 @@ Transform the data as needed to create a plot in chronological order. Add at lea
 
 ```{r}
 iceplot <- ggplot(data = icecore, 
-       mapping = aes(x= `Mean Age of the Air (yr BP)`, y= `CO2 Concentration (PPMV)`))+
+       mapping = aes(x= `Mean Age of the Air (yr BP)`, 
+                     y= `CO2 Concentration (PPMV)`))+
   geom_point()+
   scale_x_log10()+
   scale_x_reverse()+
@@ -213,7 +221,8 @@ temp2 <- icecore |>
   mutate(date = 2025-`Mean Age of the Air (yr BP)`)
   
 # temp3 <- merge(temp2, co2)
-combined <- data_frame(PPM=c(temp2$`CO2 Concentration (PPMV)`,co2$average), Date= c(temp2$date, co2$decimal_date))
+combined <- data_frame(PPM=c(temp2$`CO2 Concentration (PPMV)`,co2$average), 
+                       Date= c(temp2$date, co2$decimal_date))
 #combining all the date data to one dataframe
 
 
@@ -231,9 +240,11 @@ final_plot <- ggplot(combined, mapping = aes(x= Date, y= PPM))+
   ##couldnt figure out how to make custom legend
   
   
-  scale_x_continuous(name= "Date", breaks= c(-400000,-300000,-200000,-100000,1800), labels = c("400 ka", "300 ka" , "200 ka" , "100 ka" ,1800))
+  scale_x_continuous(name= "Date", breaks= c(-400000,-300000,-200000,-100000,1800),
+                     labels = c("400 ka", "300 ka" , "200 ka" , "100 ka" ,1800))
 
-final_plot <- final_plot + geom_line(data = segment, mapping = aes(x=Date, y=PPM), color = "green")
+final_plot <- final_plot + geom_line(data = segment, mapping = aes(x=Date, y=PPM),
+                                     color = "green")
 final_plot
 ```
 
@@ -243,4 +254,4 @@ Write a catchy title and short description in the style of a NYtimes infographic
 
 Slow Cycle to Sudden Spike:
 
-For millions of years, Earth's atmospheric CO2 rose and fell gradually over thousands of years. However, since the industrial revolution, humans have driven an unprecedented spike in less than 150 years. This graph contrasts the natural rhythm of CO2 ebb and flow with today's human made spike.
+For millions of years, Earth's atmospheric CO2 rose and fell gradually over millennia . However, since the industrial revolution, humans have driven an unprecedented spike in less than 150 years. This graph contrasts the natural rhythm of CO2 ebb and flow with today's human made spike.
