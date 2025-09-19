@@ -157,7 +157,7 @@ ggplot(data = nasa, mapping=aes(x = year, y = lowess))+
 
 Consider the "pause" analyzed in Lewandowsky et al. 2016. Do you see evidence for such a pause?
 
-no. Especially with the regression line, you can see that global temperature change is increasing.
+No. Especially with the regression line, you can see that global temperature change is increasing. (concave up)
 
 ### Bonus 1 (1 point)
 
