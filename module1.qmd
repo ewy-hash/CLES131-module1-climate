@@ -146,6 +146,8 @@ nasa <- read_table(file = "https://data.giss.nasa.gov/gistemp/graphs/graph_data/
 
 Plot the trend in global mean temperature over time. Describe what you see and how you interpret the patterns you observe.
 
+I see that the average increase per year smoothed over a 5 year period has increased a lot since the 1800s.
+
 ```{r}
 ggplot(data = nasa, mapping=aes(x = year, y = lowess))+
          geom_point()+
