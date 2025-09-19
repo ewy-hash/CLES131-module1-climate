@@ -9,13 +9,20 @@ editor: visual
 #| output-location: false
 library(tidyverse)
 ```
+
 ## Team members, etc
+
 List your team member(s):
+
+Evan Wyers
 
 Include a link to your forked GH repository:
 
+<https://github.com/ewy-hash/CLES131-module1-climate#>
+
 Include a link to your .qmd file:
 
+<https://github.com/ewy-hash/CLES131-module1-climate/blob/main/module1.qmd>
 
 ## CO2 trends from Mauna Loa
 
@@ -44,13 +51,76 @@ head(co2)
 
 Create a timeseries plot of average \[CO~2~\]. Use `as.Date()` to create a formatted date for the x-axis. Label both the y-axis and add a line to connect the points.
 
+```{r}
+#co22000 <- gapminder |> 
+#  dplyr::filter(year == 2000)
+co2$datefixed <- as.Date(paste(co2$year, co2$month, "01", sep = "-"), 
+                                 format = "%Y-%m-%d")
+ggplot(data = co2, 
+       mapping = aes(x = datefixed, 
+                     y = average)) + 
+        scale_y_continuous("Average CO2 (PPM)") + 
+          geom_point(size = .25) +
+  scale_x_date("Date") +
+  geom_line()
+  
+
+```
+
+```{r}
+
+#to show which month was the highest
+#co22000 <- co2 |> 
+#  dplyr::filter(year == 2000)
+#date <- year +month
+ggplot(data = co2, 
+       mapping = aes(x = month, y = average)) + 
+        scale_x_continuous("Month") +
+        scale_y_continuous("Average CO2 (PPM)") + 
+        
+  geom_smooth()
+  
+```
+
 ### Q2 (1 point)
 
 What months are the \[CO~2~\] values at the maximum? Create another dataframe with these months selected and create a plot like above, but with the maximum months colored in "forestgreen".
 
+```{r}
+#co2 is highest in april, may, june,
+# plot of just april, may, and june
+co2high <- co2 |> 
+  dplyr::filter(month == 5 | month == 4 | month == 6)
+ggplot(data = co2high, 
+       mapping = aes(x = year, y = average)) + 
+        scale_x_continuous("Date") +
+        scale_y_continuous("Average CO2 (PPM)") +
+          geom_point(size = .25)
+
+
+```
+
+```{r}
+#just month 4,5,6
+co2high <- co2 |> 
+  dplyr::filter(month == 5 | month == 4 | month == 6)
+plot <- ggplot(data = co2, 
+       mapping = aes(x = decimal_date, y = average)) + 
+        scale_x_continuous("Date") +
+        scale_y_continuous("Average CO2 (PPM)") + 
+          geom_point(size = .25) +
+  geom_point(size = .25,)# +
+  #geom_line()
+plot <- plot+ geom_point(data = co2high, aes(x = decimal_date, y = average), color = "forestgreen",  size = .25)
+
+plot
+```
+
 ### Q3 (1 point)
 
 What explains the seasonal variation in \[CO~2~\]? After reading Lewandowsky et al. 2016, how might you go about separating the long term trend and the seasonal variation in \[CO~2~\]?
+
+Different amounts of photosynthesis depending on seasons, as well as differences in CO2 emissions from organic matter dissolving. I think it could be useful to average out the yearly increase, so graphs wouldn't show the seasonal variation and confuse people.
 
 ## Global temperature
 
@@ -62,19 +132,35 @@ Read some [background](https://data.giss.nasa.gov/gistemp/history/background.htm
 
 How are the measurements made? Describe each column in the dataset and its units. What are the resolution of the data?
 
+The measurements are made from measuring land and ocean surface temperatures, the first column is the year. The second column is the yearly change in average temperature, which fluctuates a lot because of el nino and other yearly changes. The third column is the smoothed average, where a 5 year trend is calculated. The resolution of the data is one year.
+
 ### Q5 (1 point)
 
 Construct code to import dataset in a format that can be used for transforming and visualization.
+
+```{r}
+nasa <- read_table(file = "https://data.giss.nasa.gov/gistemp/graphs/graph_data/Global_Mean_Estimates_based_on_Land_and_Ocean_Data/graph.txt", col_names = c("year", "no_smoothing", "lowess"), col_types = NULL, skip = 5 )
+```
 
 ### Q6 (1 point)
 
 Plot the trend in global mean temperature over time. Describe what you see and how you interpret the patterns you observe.
 
+```{r}
+ggplot(data = nasa, mapping=aes(x = year, y = lowess))+
+         geom_point()+
+  scale_y_continuous("5 year average increase")+ 
+  geom_smooth()
+```
+
 ### Q7 (1 point)
 
-Consider the "pause" analyzed in Lewandowsky et al. 2016. Do you see evidence for such a pause? 
+Consider the "pause" analyzed in Lewandowsky et al. 2016. Do you see evidence for such a pause?
+
+no. Especially with the regression line, you can see that global temperature change is increasing.
 
 ### Bonus 1 (1 point)
+
 Recreate the analysis from Lewandowsky's Fig. 1.
 
 ## Long term records of CO2
@@ -89,13 +175,65 @@ After downloading this dataset, create a folder entitled `data` and save the fil
 
 After downloading this dataset, create a folder entitled `data` and save the file within the folder with a .txt extension. Read this file into R. What are the columns and units? How were these data obtained?
 
+The columns are: Depth (m), Age of the Ice (yr BP), Mean age of the Air ( yr BP), CO2 Concentration (PPMV)
+
+m is meters, yr BP is years before present, PPMV is Parts per million by volume.
+
+Ice cores were recovered from Antarctica. Different depth levels correspond to how long ago the ice froze. Ice from different depth levels were crushed under a vacuum, and when the gases from the ice expanded, CO2 concentrations were measured with gas chromatography.
+
+```{r}
+icecore <- read_table(file = "Data/vostok.icecore.co2.txt", col_names = c("Depth (m)", "Age of the Ice (yr BP)", "Mean Age of the Air (yr BP)", "CO2 Concentration (PPMV)"), skip = 21)
+```
+
 ### Q9 (1 point)
 
 Transform the data as needed to create a plot in chronological order. Add at least two different smoothing window averages to your plot.
+
+```{r}
+iceplot <- ggplot(data = icecore, 
+       mapping = aes(x= `Mean Age of the Air (yr BP)`, y= `CO2 Concentration (PPMV)`))+
+  geom_point()+
+  scale_x_log10()+
+  scale_x_reverse()+
+  geom_smooth(mapping =NULL, data= NULL, span= .25, )
+iceplot <- iceplot + geom_smooth(mapping =NULL, data= NULL, span= 1, se =FALSE)
+iceplot
+```
 
 ### Q10 (1 point)
 
 Join your data with the Mauna Loa data and plot together, considering different colors for the different datasets.
 
+```{r}
+#need to combine co2 dataframe and icecore dataframe
+temp2 <- icecore |> 
+  mutate(date = 2025-`Mean Age of the Air (yr BP)`)
+  
+# temp3 <- merge(temp2, co2)
+combined <- data_frame(PPM=c(temp2$`CO2 Concentration (PPMV)`,co2$average), Date= c(temp2$date, co2$decimal_date))
+#combining all the date data to one dataframe
+
+
+
+segment <- combined %>%
+  filter(between(Date, 1800, 3000))
+
+final_plot <- ggplot(combined, mapping = aes(x= Date, y= PPM))+
+  scale_y_continuous(name = "CO2 PPM")+
+  geom_line(color = "red")+
+  
+  
+  
+  # scale_color_manual(name = "Legend", values = c("Ice Core Data" = "red", "Modern Mauna Loa Data"= "green"))
+  ##couldnt figure out how to make custom legend
+  
+  
+  scale_x_continuous(name= "Date", breaks= c(-400000,-300000,-200000,-100000,2000), labels = c("400 ka", "300 ka" , "200 ka" , "100 ka" ,2000))
+
+final_plot <- final_plot + geom_line(data = segment, mapping = aes(x=Date, y=PPM), color = "green")
+final_plot
+```
+
 ### Bonus 2 (1 point)
+
 Write a catchy title and short description in the style of a NYtimes infographic, contrasting the rate of anthropogenic vs. background climate change for a general public audience.
